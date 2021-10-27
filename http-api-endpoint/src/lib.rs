@@ -1,4 +1,4 @@
-use std::{error, fmt, time::Duration};
+use std::{error, time::Duration};
 
 pub use http::{self, Request, Response};
 
@@ -8,7 +8,7 @@ pub const MIME_APPLICATION_JSON: &str = "application/json";
 pub trait Endpoint {
     type RenderRequestError: error::Error + 'static;
 
-    type ParseResponseOutput: fmt::Debug;
+    type ParseResponseOutput;
     type ParseResponseError: error::Error + 'static;
 
     fn render_request(&self) -> Result<Request<Body>, Self::RenderRequestError>;
@@ -20,7 +20,7 @@ pub trait Endpoint {
 }
 
 pub trait RetryableEndpoint {
-    type RetryReason: Send + Sync + fmt::Debug + Clone;
+    type RetryReason: Send + Sync + Clone;
     const MAX_RETRY_COUNT: usize = 3;
 
     type RenderRequestError: error::Error + 'static;
@@ -48,17 +48,11 @@ pub trait RetryableEndpoint {
 }
 
 #[derive(Debug)]
-pub struct RetryableEndpointRetry<T>
-where
-    T: fmt::Debug,
-{
+pub struct RetryableEndpointRetry<T> {
     pub count: usize,
     pub reason: T,
 }
-impl<T> RetryableEndpointRetry<T>
-where
-    T: fmt::Debug,
-{
+impl<T> RetryableEndpointRetry<T> {
     pub fn new(count: usize, reason: T) -> Self {
         Self { count, reason }
     }

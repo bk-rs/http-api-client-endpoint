@@ -17,6 +17,7 @@ use isahc::{
 
 pub struct IsahcClient {
     http_client: HttpClient,
+    pub body_buf_default_capacity: usize,
 }
 
 impl IsahcClient {
@@ -24,12 +25,16 @@ impl IsahcClient {
         Ok(Self::with(
             HttpClient::builder()
                 .connect_timeout(Duration::from_secs(5))
+                .timeout(Duration::from_secs(30))
                 .build()?,
         ))
     }
 
     pub fn with(http_client: HttpClient) -> Self {
-        Self { http_client }
+        Self {
+            http_client,
+            body_buf_default_capacity: 4 * 1024,
+        }
     }
 }
 
@@ -41,7 +46,10 @@ impl Client for IsahcClient {
         let res = self.http_client.send_async(request).await?;
         let (head, body) = res.into_parts();
 
-        let mut body_buf = Vec::with_capacity(body.len().unwrap_or_else(|| 4 * 1024) as usize);
+        let mut body_buf = Vec::with_capacity(
+            body.len()
+                .unwrap_or_else(|| self.body_buf_default_capacity as u64) as usize,
+        );
 
         let mut res = Response::from_parts(head, body);
         res.copy_to(&mut body_buf).await?;

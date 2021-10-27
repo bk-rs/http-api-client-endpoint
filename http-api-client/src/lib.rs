@@ -76,7 +76,7 @@ pub trait RetryableClient: Client {
                     return Err(RetryableClientRespondEndpointUntilDoneError::ReachedMaxRetries);
                 }
 
-                self.sleep(endpoint.next_retry_in(&retry)).await;
+                self.sleep(endpoint.next_retry_in(retry)).await;
             }
         }
     }
