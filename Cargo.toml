@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "http-api-client",
+    "http-api-endpoint",
+    "http-api-isahc-client",
+]

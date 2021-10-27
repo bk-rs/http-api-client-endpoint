@@ -1,0 +1,9 @@
+[package]
+name = "http-api-client"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+http-api-endpoint = { version = "^0.1", path = "../http-api-endpoint" }
+
+async-trait = { version = "0.1", default-features = false }
