@@ -1,7 +1,16 @@
 [package]
 name = "http-api-isahc-client"
 version = "0.1.0"
+authors = ["vkill <vkill.net@gmail.com>"]
 edition = "2018"
+description = "HTTP API Isahc Client"
+license = "Apache-2.0 OR MIT"
+repository = "https://github.com/bk-rs/http-api-endpoint"
+homepage = "https://github.com/bk-rs/http-api-endpoint"
+documentation = "https://docs.rs/http-api-isahc-client"
+keywords = []
+categories = []
+readme = "README.md"
 
 [package.metadata.docs.rs]
 features = [ "sleep-via-tokio" ]

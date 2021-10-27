@@ -1,7 +1,16 @@
 [package]
 name = "http-api-endpoint"
 version = "0.1.0"
+authors = ["vkill <vkill.net@gmail.com>"]
 edition = "2018"
+description = "HTTP API Endpoint"
+license = "Apache-2.0 OR MIT"
+repository = "https://github.com/bk-rs/http-api-endpoint"
+homepage = "https://github.com/bk-rs/http-api-endpoint"
+documentation = "https://docs.rs/http-api-endpoint"
+keywords = []
+categories = []
+readme = "README.md"
 
 [dependencies]
 http = { version = "0.2", default-features = false }
