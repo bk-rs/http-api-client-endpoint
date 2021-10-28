@@ -21,13 +21,41 @@ pub trait Client {
             EP::ParseResponseError,
         >,
     > {
+        self.respond_endpoint_with_callback(endpoint, |req| req, |_| {})
+            .await
+    }
+
+    async fn respond_endpoint_with_callback<EP, PreRCB, PostRCB>(
+        &self,
+        endpoint: &EP,
+        mut pre_request_callback: PreRCB,
+        mut post_request_callback: PostRCB,
+    ) -> Result<
+        EP::ParseResponseOutput,
+        ClientRespondEndpointError<
+            Self::RespondError,
+            EP::RenderRequestError,
+            EP::ParseResponseError,
+        >,
+    >
+    where
+        EP: Endpoint + Send + Sync,
+        PreRCB: FnMut(Request<Body>) -> Request<Body> + Send,
+        PostRCB: FnMut(&Response<Body>) + Send,
+    {
         let request = endpoint
             .render_request()
             .map_err(ClientRespondEndpointError::EndpointRenderRequestFailed)?;
+
+        let request = pre_request_callback(request);
+
         let response = self
             .respond(request)
             .await
             .map_err(ClientRespondEndpointError::RespondFailed)?;
+
+        post_request_callback(&response);
+
         endpoint
             .parse_response(response)
             .map_err(ClientRespondEndpointError::EndpointParseResponseFailed)
@@ -38,7 +66,7 @@ pub trait Client {
 pub trait RetryableClient: Client {
     async fn sleep(&self, dur: Duration);
 
-    async fn respond_endpoint_until_done<EP: RetryableEndpoint + Send + Sync>(
+    async fn respond_endpoint_until_done<EP>(
         &self,
         endpoint: &EP,
     ) -> Result<
@@ -48,17 +76,49 @@ pub trait RetryableClient: Client {
             EP::RenderRequestError,
             EP::ParseResponseError,
         >,
-    > {
+    >
+    where
+        EP: RetryableEndpoint + Send + Sync,
+    {
+        self.respond_endpoint_until_done_with_callback(endpoint, |req, _| req, |_, _| {})
+            .await
+    }
+
+    async fn respond_endpoint_until_done_with_callback<EP, PreRCB, PostRCB>(
+        &self,
+        endpoint: &EP,
+        mut pre_request_callback: PreRCB,
+        mut post_request_callback: PostRCB,
+    ) -> Result<
+        EP::ParseResponseOutput,
+        RetryableClientRespondEndpointUntilDoneError<
+            Self::RespondError,
+            EP::RenderRequestError,
+            EP::ParseResponseError,
+        >,
+    >
+    where
+        EP: RetryableEndpoint + Send + Sync,
+        PreRCB: FnMut(Request<Body>, Option<&RetryableEndpointRetry<EP::RetryReason>>) -> Request<Body>
+            + Send,
+        PostRCB: FnMut(&Response<Body>, Option<&RetryableEndpointRetry<EP::RetryReason>>) + Send,
+    {
         let mut retry = None;
 
         loop {
             let request = endpoint.render_request(retry.as_ref()).map_err(
                 RetryableClientRespondEndpointUntilDoneError::EndpointRenderRequestFailed,
             )?;
+
+            let request = pre_request_callback(request, retry.as_ref());
+
             let response = self
                 .respond(request)
                 .await
                 .map_err(RetryableClientRespondEndpointUntilDoneError::RespondFailed)?;
+
+            post_request_callback(&response, retry.as_ref());
+
             match endpoint.parse_response(response, retry.as_ref()).map_err(
                 RetryableClientRespondEndpointUntilDoneError::EndpointParseResponseFailed,
             )? {
