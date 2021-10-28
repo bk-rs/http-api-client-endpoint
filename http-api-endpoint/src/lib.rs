@@ -1,4 +1,4 @@
-use std::{error, time::Duration};
+use std::{error, fmt, time::Duration};
 
 pub use http::{self, Request, Response};
 
@@ -20,7 +20,7 @@ pub trait Endpoint {
 }
 
 pub trait RetryableEndpoint {
-    type RetryReason: Send + Sync + Clone;
+    type RetryReason: Send + Sync + Clone + fmt::Debug;
     const MAX_RETRY_COUNT: usize = 3;
 
     type RenderRequestError: error::Error + 'static;
