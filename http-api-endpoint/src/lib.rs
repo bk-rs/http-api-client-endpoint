@@ -20,7 +20,7 @@ pub trait Endpoint {
 }
 
 pub trait RetryableEndpoint {
-    type RetryReason: Send + Sync + Clone + fmt::Debug;
+    type RetryReason: Send + Sync + Clone;
     const MAX_RETRY_COUNT: usize = 3;
 
     type RenderRequestError: error::Error + 'static;
@@ -47,11 +47,24 @@ pub trait RetryableEndpoint {
     }
 }
 
-#[derive(Debug)]
+//
 pub struct RetryableEndpointRetry<T> {
     pub count: usize,
     pub reason: T,
 }
+
+impl<T> fmt::Debug for RetryableEndpointRetry<T>
+where
+    T: fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("RetryableEndpointRetry")
+            .field("count", &self.count)
+            .field("reason", &self.reason)
+            .finish()
+    }
+}
+
 impl<T> RetryableEndpointRetry<T> {
     pub fn new(count: usize, reason: T) -> Self {
         Self { count, reason }
