@@ -6,7 +6,10 @@ use std::error;
 
 use futures_lite::future::block_on;
 use http_api_isahc_client::{Client as _, IsahcClient, RetryableClient as _};
-use isahc::HttpClient;
+use isahc::{
+    config::{Configurable as _, RedirectPolicy},
+    HttpClient,
+};
 
 fn main() -> Result<(), Box<dyn error::Error>> {
     pretty_env_logger::init();
@@ -15,7 +18,12 @@ fn main() -> Result<(), Box<dyn error::Error>> {
 }
 
 async fn run() -> Result<(), Box<dyn error::Error>> {
-    let client = IsahcClient::with(HttpClient::builder().cookies().build()?);
+    let client = IsahcClient::with(
+        HttpClient::builder()
+            .cookies()
+            .redirect_policy(RedirectPolicy::Follow)
+            .build()?,
+    );
 
     //
     let ip_endpoint = endpoints::IpEndpoint;
@@ -47,7 +55,8 @@ async fn run() -> Result<(), Box<dyn error::Error>> {
 
     //
     let cookies_set_endpoint = endpoints::CookiesSetEndpoint;
-    client.respond_endpoint(&cookies_set_endpoint).await?;
+    let ret = client.respond_endpoint(&cookies_set_endpoint).await?;
+    println!("{:?}", ret);
     println!("cookie_jar: {:?}", client.http_client.cookie_jar());
 
     //
@@ -132,10 +141,14 @@ pub mod endpoints {
 
     //
     pub struct CookiesSetEndpoint;
+    #[derive(Deserialize, Debug)]
+    pub struct CookiesEndpointResponseBodyJson {
+        pub cookies: HashMap<String, String>,
+    }
     impl Endpoint for CookiesSetEndpoint {
         type RenderRequestError = HttpError;
 
-        type ParseResponseOutput = ();
+        type ParseResponseOutput = CookiesEndpointResponseBodyJson;
         type ParseResponseError = SerdeJsonError;
 
         fn render_request(&self) -> Result<Request<Body>, Self::RenderRequestError> {
@@ -148,8 +161,7 @@ pub mod endpoints {
             &self,
             response: Response<Body>,
         ) -> Result<Self::ParseResponseOutput, Self::ParseResponseError> {
-            debug_assert!(response.status().as_u16() == 302);
-            Ok(())
+            serde_json::from_slice::<CookiesEndpointResponseBodyJson>(response.body())
         }
     }
 
