@@ -9,7 +9,7 @@ use reqwest::{Client as ReqwestHttpClient, Error as ReqwestError, Request as Req
 
 #[derive(Debug, Clone)]
 pub struct ReqwestClient {
-    http_client: ReqwestHttpClient,
+    pub http_client: ReqwestHttpClient,
 }
 
 impl ReqwestClient {

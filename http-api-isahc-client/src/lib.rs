@@ -18,7 +18,7 @@ use isahc::{
 
 #[derive(Debug, Clone)]
 pub struct IsahcClient {
-    http_client: IsahcHttpClient,
+    pub http_client: IsahcHttpClient,
     pub body_buf_default_capacity: usize,
 }
 

@@ -6,6 +6,7 @@ use std::error;
 
 use futures_lite::future::block_on;
 use http_api_isahc_client::{Client as _, IsahcClient, RetryableClient as _};
+use isahc::HttpClient;
 
 fn main() -> Result<(), Box<dyn error::Error>> {
     pretty_env_logger::init();
@@ -14,7 +15,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
 }
 
 async fn run() -> Result<(), Box<dyn error::Error>> {
-    let client = IsahcClient::new()?;
+    let client = IsahcClient::with(HttpClient::builder().cookies().build()?);
 
     //
     let ip_endpoint = endpoints::IpEndpoint;
@@ -43,6 +44,11 @@ async fn run() -> Result<(), Box<dyn error::Error>> {
         res_header_server.map(String::from_utf8)
     );
     println!("{:?}", ret);
+
+    //
+    let cookies_set_endpoint = endpoints::CookiesSetEndpoint;
+    client.respond_endpoint(&cookies_set_endpoint).await?;
+    println!("cookie_jar: {:?}", client.http_client.cookie_jar());
 
     //
     let uuid_endpoint = endpoints::UuidEndpoint;
@@ -121,6 +127,29 @@ pub mod endpoints {
             response: Response<Body>,
         ) -> Result<Self::ParseResponseOutput, Self::ParseResponseError> {
             serde_json::from_slice::<HeadersEndpointResponseBodyJson>(response.body())
+        }
+    }
+
+    //
+    pub struct CookiesSetEndpoint;
+    impl Endpoint for CookiesSetEndpoint {
+        type RenderRequestError = HttpError;
+
+        type ParseResponseOutput = ();
+        type ParseResponseError = SerdeJsonError;
+
+        fn render_request(&self) -> Result<Request<Body>, Self::RenderRequestError> {
+            Request::builder()
+                .uri("https://httpbin.org/cookies/set?foo=bar")
+                .body(vec![])
+        }
+
+        fn parse_response(
+            &self,
+            response: Response<Body>,
+        ) -> Result<Self::ParseResponseOutput, Self::ParseResponseError> {
+            debug_assert!(response.status().as_u16() == 302);
+            Ok(())
         }
     }
 
