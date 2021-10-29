@@ -12,25 +12,27 @@ pub use http_api_client::Client;
 pub use http_api_client::RetryableClient;
 use http_api_client::{async_trait, Body, Request, Response};
 use isahc::{
-    config::Configurable as _, AsyncReadResponseExt as _, Error as IsahcError, HttpClient,
+    config::Configurable as _, AsyncReadResponseExt as _, Error as IsahcError,
+    HttpClient as IsahcHttpClient,
 };
 
+#[derive(Debug, Clone)]
 pub struct IsahcClient {
-    http_client: HttpClient,
+    http_client: IsahcHttpClient,
     pub body_buf_default_capacity: usize,
 }
 
 impl IsahcClient {
-    pub fn new() -> Result<Self, isahc::Error> {
+    pub fn new() -> Result<Self, IsahcError> {
         Ok(Self::with(
-            HttpClient::builder()
+            IsahcHttpClient::builder()
                 .connect_timeout(Duration::from_secs(5))
                 .timeout(Duration::from_secs(30))
                 .build()?,
         ))
     }
 
-    pub fn with(http_client: HttpClient) -> Self {
+    pub fn with(http_client: IsahcHttpClient) -> Self {
         Self {
             http_client,
             body_buf_default_capacity: 4 * 1024,

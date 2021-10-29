@@ -1,0 +1,11 @@
+[package]
+name = "http-api-reqwest-client"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+http-api-client = { version = "^0.1", path = "../http-api-client" }
+
+reqwest = { version = "0.11", default-features = false }
+
+tokio = { version = "1.12", default-features = false, features = ["time"] }
