@@ -1,5 +1,5 @@
 /*
-RUST_BACKTRACE=1 RUST_LOG=trace cargo run -p http-api-endpoint-demo --bin httpbin
+RUST_BACKTRACE=1 RUST_LOG=trace cargo run -p http-api-isahc-client-demo --bin httpbin
 */
 
 use std::error;

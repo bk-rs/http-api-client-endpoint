@@ -5,9 +5,9 @@ use std::time::Duration;
 
 pub use http_api_client::Client;
 #[cfg(any(
-    feature = "sleep-via-tokio",
-    feature = "sleep-via-futures-timer",
-    feature = "sleep-via-async-io"
+    feature = "with-sleep-via-tokio",
+    feature = "with-sleep-via-futures-timer",
+    feature = "with-sleep-via-async-io"
 ))]
 pub use http_api_client::RetryableClient;
 use http_api_client::{async_trait, Body, Request, Response};
@@ -62,9 +62,9 @@ impl Client for IsahcClient {
 }
 
 #[cfg(all(
-    feature = "sleep-via-tokio",
-    not(feature = "sleep-via-futures-timer"),
-    not(feature = "sleep-via-async-io")
+    feature = "with-sleep-via-tokio",
+    not(feature = "with-sleep-via-futures-timer"),
+    not(feature = "with-sleep-via-async-io")
 ))]
 #[async_trait]
 impl RetryableClient for IsahcClient {
@@ -74,9 +74,9 @@ impl RetryableClient for IsahcClient {
 }
 
 #[cfg(all(
-    not(feature = "sleep-via-tokio"),
-    feature = "sleep-via-futures-timer",
-    not(feature = "sleep-via-async-io")
+    not(feature = "with-sleep-via-tokio"),
+    feature = "with-sleep-via-futures-timer",
+    not(feature = "with-sleep-via-async-io")
 ))]
 #[async_trait]
 impl RetryableClient for IsahcClient {
@@ -86,9 +86,9 @@ impl RetryableClient for IsahcClient {
 }
 
 #[cfg(all(
-    not(feature = "sleep-via-tokio"),
-    not(feature = "sleep-via-futures-timer"),
-    feature = "sleep-via-async-io"
+    not(feature = "with-sleep-via-tokio"),
+    not(feature = "with-sleep-via-futures-timer"),
+    feature = "with-sleep-via-async-io"
 ))]
 #[async_trait]
 impl RetryableClient for IsahcClient {

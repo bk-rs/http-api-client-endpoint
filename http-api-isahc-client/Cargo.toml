@@ -13,12 +13,12 @@ categories = []
 readme = "README.md"
 
 [package.metadata.docs.rs]
-features = [ "sleep-via-tokio" ]
+features = [ "with-sleep-via-tokio" ]
 
 [features]
-sleep-via-tokio = ["tokio/time"]
-sleep-via-futures-timer = ["futures-timer"]
-sleep-via-async-io = ["async-io"]
+with-sleep-via-tokio = ["tokio/time"]
+with-sleep-via-futures-timer = ["futures-timer"]
+with-sleep-via-async-io = ["async-io"]
 
 [dependencies]
 http-api-client = { version = "^0.1", path = "../http-api-client" }
@@ -38,9 +38,9 @@ rand = { version = "0.8" }
 
 [package.metadata.cargo-all-features]
 skip_feature_sets = [
-    ["sleep-via-tokio", "sleep-via-futures-timer"],
-    ["sleep-via-tokio", "sleep-via-async-io"],
+    ["with-sleep-via-tokio", "with-sleep-via-futures-timer"],
+    ["with-sleep-via-tokio", "with-sleep-via-async-io"],
 
-    ["sleep-via-futures-timer", "sleep-via-async-io"],
+    ["with-sleep-via-futures-timer", "with-sleep-via-async-io"],
 ]
 skip_optional_dependencies = true

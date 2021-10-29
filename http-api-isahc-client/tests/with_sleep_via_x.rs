@@ -41,9 +41,9 @@ impl RetryableEndpoint for Foo {
 }
 
 #[cfg(all(
-    feature = "sleep-via-tokio",
-    not(feature = "sleep-via-futures-timer"),
-    not(feature = "sleep-via-async-io")
+    feature = "with-sleep-via-tokio",
+    not(feature = "with-sleep-via-futures-timer"),
+    not(feature = "with-sleep-via-async-io")
 ))]
 mod sleep_via_tokio_tests {
     use super::Foo;
@@ -63,9 +63,9 @@ mod sleep_via_tokio_tests {
 }
 
 #[cfg(all(
-    not(feature = "sleep-via-tokio"),
-    feature = "sleep-via-futures-timer",
-    not(feature = "sleep-via-async-io")
+    not(feature = "with-sleep-via-tokio"),
+    feature = "with-sleep-via-futures-timer",
+    not(feature = "with-sleep-via-async-io")
 ))]
 mod sleep_via_futures_timer_tests {
     use super::Foo;
@@ -84,9 +84,9 @@ mod sleep_via_futures_timer_tests {
 }
 
 #[cfg(all(
-    not(feature = "sleep-via-tokio"),
-    not(feature = "sleep-via-futures-timer"),
-    feature = "sleep-via-async-io"
+    not(feature = "with-sleep-via-tokio"),
+    not(feature = "with-sleep-via-futures-timer"),
+    feature = "with-sleep-via-async-io"
 ))]
 mod sleep_via_async_io_tests {
     use super::Foo;

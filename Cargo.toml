@@ -3,6 +3,5 @@ members = [
     "http-api-client",
     "http-api-endpoint",
     "http-api-isahc-client",
-
-    "http-api-endpoint-demo",
+    "http-api-isahc-client-demo",
 ]
