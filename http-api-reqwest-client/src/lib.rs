@@ -3,9 +3,7 @@ pub use reqwest;
 
 use std::time::Duration;
 
-use http_api_client::{
-    async_trait, http::response::Builder as HttpResponseBuilder, Body, Request, Response,
-};
+use http_api_client::{async_trait, Body, Request, Response};
 pub use http_api_client::{Client, RetryableClient};
 use reqwest::{Client as ReqwestHttpClient, Error as ReqwestError, Request as ReqwestRequest};
 
@@ -34,21 +32,20 @@ impl Client for ReqwestClient {
     type RespondError = ReqwestError;
 
     async fn respond(&self, request: Request<Body>) -> Result<Response<Body>, Self::RespondError> {
-        let request = ReqwestRequest::try_from(request)?;
+        let res_reqwest = self
+            .http_client
+            .execute(ReqwestRequest::try_from(request)?)
+            .await?;
 
-        let res = self.http_client.execute(request).await?;
+        let res = Response::new(());
+        let (mut head, _) = res.into_parts();
+        head.status = res_reqwest.status();
+        head.version = res_reqwest.version();
+        head.headers = res_reqwest.headers().to_owned();
 
-        let http_res = HttpResponseBuilder::new()
-            .status(res.status())
-            .version(res.version())
-            .body(())
-            .unwrap();
-        let (mut head, _) = http_res.into_parts();
-        head.headers = res.headers().to_owned();
+        let body = res_reqwest.bytes().await?.to_vec();
 
-        let body_bytes = res.bytes().await?;
-
-        let res = Response::from_parts(head, body_bytes.to_vec());
+        let res = Response::from_parts(head, body);
 
         Ok(res)
     }
