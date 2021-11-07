@@ -31,8 +31,8 @@ pub trait Client {
     async fn respond_endpoint_with_callback<EP, PreRCB, PostRCB>(
         &self,
         endpoint: &EP,
-        mut pre_request_callback: PreRCB,
-        mut post_request_callback: PostRCB,
+        pre_request_callback: PreRCB,
+        post_request_callback: PostRCB,
     ) -> Result<
         EP::ParseResponseOutput,
         ClientRespondEndpointError<
@@ -46,22 +46,12 @@ pub trait Client {
         PreRCB: FnMut(Request<Body>) -> Request<Body> + Send,
         PostRCB: FnMut(&Response<Body>) + Send,
     {
-        let request = endpoint
-            .render_request()
-            .map_err(ClientRespondEndpointError::EndpointRenderRequestFailed)?;
-
-        let request = pre_request_callback(request);
-
-        let response = self
-            .respond(request)
-            .await
-            .map_err(ClientRespondEndpointError::RespondFailed)?;
-
-        post_request_callback(&response);
-
-        endpoint
-            .parse_response(response)
-            .map_err(ClientRespondEndpointError::EndpointParseResponseFailed)
+        self.respond_dyn_endpoint_with_callback(
+            endpoint,
+            pre_request_callback,
+            post_request_callback,
+        )
+        .await
     }
 
     async fn respond_dyn_endpoint<RRE, PRO, PRE>(
