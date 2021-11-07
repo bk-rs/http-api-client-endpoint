@@ -63,6 +63,62 @@ pub trait Client {
             .parse_response(response)
             .map_err(ClientRespondEndpointError::EndpointParseResponseFailed)
     }
+
+    async fn respond_dyn_endpoint<RRE, PRO, PRE>(
+        &self,
+        endpoint: &Box<
+            dyn Endpoint<
+                    RenderRequestError = RRE,
+                    ParseResponseOutput = PRO,
+                    ParseResponseError = PRE,
+                > + Send
+                + Sync,
+        >,
+    ) -> Result<PRO, ClientRespondEndpointError<Self::RespondError, RRE, PRE>>
+    where
+        RRE: error::Error + 'static,
+        PRE: error::Error + 'static,
+    {
+        self.respond_dyn_endpoint_with_callback(endpoint, |req| req, |_| {})
+            .await
+    }
+
+    async fn respond_dyn_endpoint_with_callback<RRE, PRO, PRE, PreRCB, PostRCB>(
+        &self,
+        endpoint: &Box<
+            dyn Endpoint<
+                    RenderRequestError = RRE,
+                    ParseResponseOutput = PRO,
+                    ParseResponseError = PRE,
+                > + Send
+                + Sync,
+        >,
+        mut pre_request_callback: PreRCB,
+        mut post_request_callback: PostRCB,
+    ) -> Result<PRO, ClientRespondEndpointError<Self::RespondError, RRE, PRE>>
+    where
+        RRE: error::Error + 'static,
+        PRE: error::Error + 'static,
+        PreRCB: FnMut(Request<Body>) -> Request<Body> + Send,
+        PostRCB: FnMut(&Response<Body>) + Send,
+    {
+        let request = endpoint
+            .render_request()
+            .map_err(ClientRespondEndpointError::EndpointRenderRequestFailed)?;
+
+        let request = pre_request_callback(request);
+
+        let response = self
+            .respond(request)
+            .await
+            .map_err(ClientRespondEndpointError::RespondFailed)?;
+
+        post_request_callback(&response);
+
+        endpoint
+            .parse_response(response)
+            .map_err(ClientRespondEndpointError::EndpointParseResponseFailed)
+    }
 }
 
 #[async_trait]
@@ -206,4 +262,87 @@ where
     EPRRE: error::Error + 'static,
     EPPRE: error::Error + 'static,
 {
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    use std::{collections::HashMap, io, panic};
+
+    use futures_executor::block_on;
+
+    #[derive(Clone)]
+    struct MyEndpoint;
+    impl Endpoint for MyEndpoint {
+        type RenderRequestError = io::Error;
+
+        type ParseResponseOutput = ();
+        type ParseResponseError = io::Error;
+
+        fn render_request(&self) -> Result<Request<Body>, Self::RenderRequestError> {
+            unimplemented!()
+        }
+
+        fn parse_response(
+            &self,
+            _response: Response<Body>,
+        ) -> Result<Self::ParseResponseOutput, Self::ParseResponseError> {
+            unreachable!()
+        }
+    }
+
+    #[derive(Clone)]
+    struct MyClient;
+    #[async_trait]
+    impl Client for MyClient {
+        type RespondError = io::Error;
+
+        async fn respond(
+            &self,
+            _request: Request<Body>,
+        ) -> Result<Response<Body>, Self::RespondError> {
+            unreachable!()
+        }
+    }
+
+    #[test]
+    fn test_respond_dyn_endpoint() {
+        let prev_hook = panic::take_hook();
+        panic::set_hook(Box::new(|_| {}));
+        let ret = panic::catch_unwind(|| {
+            block_on(async move {
+                let mut map: HashMap<
+                    &'static str,
+                    Box<
+                        dyn Endpoint<
+                                RenderRequestError = io::Error,
+                                ParseResponseOutput = (),
+                                ParseResponseError = io::Error,
+                            > + Send
+                            + Sync,
+                    >,
+                > = HashMap::new();
+
+                let key = "x";
+                map.insert(key, Box::new(MyEndpoint));
+                let client = MyClient;
+
+                let endpoint = map.get(key).unwrap();
+                client.respond_dyn_endpoint(endpoint).await
+            })
+        });
+        panic::set_hook(prev_hook);
+
+        match ret {
+            Err(err) => {
+                if let Some(s) = err.downcast_ref::<&str>() {
+                    assert!(s.contains("not implemented"))
+                } else {
+                    panic!("{:?}", err)
+                }
+            }
+            err => panic!("{:?}", err),
+        }
+    }
 }
