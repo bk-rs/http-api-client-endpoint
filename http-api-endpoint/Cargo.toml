@@ -1,6 +1,6 @@
 [package]
 name = "http-api-endpoint"
-version = "0.1.2"
+version = "0.2.0"
 authors = ["vkill <vkill.net@gmail.com>"]
 edition = "2021"
 description = "HTTP API Endpoint"
@@ -13,4 +13,4 @@ categories = []
 readme = "README.md"
 
 [dependencies]
-http-api-client-endpoint = { version = "^0.1", path = "../http-api-client-endpoint" }
+http-api-client-endpoint = { version = "^0.2", path = "../http-api-client-endpoint" }
