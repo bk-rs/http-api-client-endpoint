@@ -12,8 +12,20 @@ keywords = []
 categories = []
 readme = "README.md"
 
+[package.metadata.docs.rs]
+all-features = true
+
+[features]
+default = []
+
+with-clone-endpoint = ["dyn-clone"]
+with-downcast-endpoint = ["downcast-rs"]
+
 [dependencies]
 http = { version = "0.2", default-features = false }
 
-dyn-clone = { version = "1.0", default-features = false }
-downcast-rs = { version = "1.2", default-features = false }
+dyn-clone = { version = "1.0", default-features = false, optional = true }
+downcast-rs = { version = "1.2", default-features = false, optional = true }
+
+[package.metadata.cargo-all-features]
+skip_optional_dependencies = true
