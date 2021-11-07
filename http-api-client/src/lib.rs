@@ -10,7 +10,7 @@ pub trait Client {
 
     async fn respond(&self, request: Request<Body>) -> Result<Response<Body>, Self::RespondError>;
 
-    async fn respond_endpoint<EP: Endpoint + Send + Sync>(
+    async fn respond_endpoint<EP>(
         &self,
         endpoint: &EP,
     ) -> Result<
@@ -20,7 +20,10 @@ pub trait Client {
             EP::RenderRequestError,
             EP::ParseResponseError,
         >,
-    > {
+    >
+    where
+        EP: Endpoint + Send + Sync,
+    {
         self.respond_endpoint_with_callback(endpoint, |req| req, |_| {})
             .await
     }
@@ -132,7 +135,7 @@ pub trait RetryableClient: Client {
 
             //
             if let Some(retry) = &retry {
-                if retry.count >= EP::MAX_RETRY_COUNT {
+                if retry.count >= endpoint.max_retry_count() {
                     return Err(RetryableClientRespondEndpointUntilDoneError::ReachedMaxRetries);
                 }
 

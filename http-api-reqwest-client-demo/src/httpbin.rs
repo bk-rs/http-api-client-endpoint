@@ -51,6 +51,7 @@ pub mod endpoints {
     use serde_json::Error as SerdeJsonError;
 
     //
+    #[derive(Clone)]
     pub struct HeadersEndpoint;
     #[derive(Deserialize, Debug)]
     pub struct HeadersEndpointResponseBodyJson {

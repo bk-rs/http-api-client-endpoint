@@ -86,6 +86,7 @@ pub mod endpoints {
     use serde_json::Error as SerdeJsonError;
 
     //
+    #[derive(Clone)]
     pub struct IpEndpoint;
     #[derive(Deserialize, Debug)]
     pub struct IpEndpointResponseBodyJson {
@@ -113,6 +114,7 @@ pub mod endpoints {
     }
 
     //
+    #[derive(Clone)]
     pub struct HeadersEndpoint;
     #[derive(Deserialize, Debug)]
     pub struct HeadersEndpointResponseBodyJson {
@@ -140,6 +142,7 @@ pub mod endpoints {
     }
 
     //
+    #[derive(Clone)]
     pub struct CookiesSetEndpoint;
     #[derive(Deserialize, Debug)]
     pub struct CookiesEndpointResponseBodyJson {
@@ -166,6 +169,7 @@ pub mod endpoints {
     }
 
     //
+    #[derive(Clone)]
     pub struct UuidEndpoint;
     #[derive(Deserialize, Debug)]
     pub struct UuidEndpointResponseBodyJson {
@@ -174,8 +178,6 @@ pub mod endpoints {
 
     impl RetryableEndpoint for UuidEndpoint {
         type RetryReason = String;
-
-        const MAX_RETRY_COUNT: usize = 5;
 
         type RenderRequestError = HttpError;
 
@@ -212,6 +214,10 @@ pub mod endpoints {
             } else {
                 Ok(Err(json.uuid))
             }
+        }
+
+        fn max_retry_count(&self) -> usize {
+            5
         }
     }
 }

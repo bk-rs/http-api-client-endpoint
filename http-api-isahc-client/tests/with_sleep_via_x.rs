@@ -2,6 +2,7 @@ use std::io;
 
 use http_api_endpoint::{Body, Request, Response, RetryableEndpoint, RetryableEndpointRetry};
 
+#[derive(Clone)]
 struct Foo;
 impl RetryableEndpoint for Foo {
     type RetryReason = usize;

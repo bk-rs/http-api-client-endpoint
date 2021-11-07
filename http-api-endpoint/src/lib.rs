@@ -1,11 +1,13 @@
 use std::{error, fmt, time::Duration};
 
+use downcast_rs::{impl_downcast, DowncastSync};
+use dyn_clone::{clone_trait_object, DynClone};
 pub use http::{self, Request, Response};
 
 pub type Body = Vec<u8>;
 pub const MIME_APPLICATION_JSON: &str = "application/json";
 
-pub trait Endpoint {
+pub trait Endpoint: DynClone + DowncastSync {
     type RenderRequestError: error::Error + 'static;
 
     type ParseResponseOutput;
@@ -19,9 +21,24 @@ pub trait Endpoint {
     ) -> Result<Self::ParseResponseOutput, Self::ParseResponseError>;
 }
 
-pub trait RetryableEndpoint {
+clone_trait_object!(<RenderRequestError, ParseResponseOutput, ParseResponseError> Endpoint<RenderRequestError = RenderRequestError, ParseResponseOutput = ParseResponseOutput, ParseResponseError = ParseResponseError>);
+impl_downcast!(Endpoint assoc RenderRequestError, ParseResponseOutput, ParseResponseError);
+
+impl<RenderRequestError, ParseResponseOutput, ParseResponseError> fmt::Debug
+    for dyn Endpoint<
+            RenderRequestError = RenderRequestError,
+            ParseResponseOutput = ParseResponseOutput,
+            ParseResponseError = ParseResponseError,
+        > + Send
+        + Sync
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Endpoint").finish()
+    }
+}
+
+pub trait RetryableEndpoint: DynClone + DowncastSync {
     type RetryReason: Send + Sync + Clone;
-    const MAX_RETRY_COUNT: usize = 3;
 
     type RenderRequestError: error::Error + 'static;
 
@@ -39,11 +56,32 @@ pub trait RetryableEndpoint {
         retry: Option<&RetryableEndpointRetry<Self::RetryReason>>,
     ) -> Result<Result<Self::ParseResponseOutput, Self::RetryReason>, Self::ParseResponseError>;
 
+    fn max_retry_count(&self) -> usize {
+        3
+    }
+
     fn next_retry_in(&self, retry: &RetryableEndpointRetry<Self::RetryReason>) -> Duration {
         match retry.count {
             0 | 1 | 2 => Duration::from_millis(500),
             _ => Duration::from_secs(1),
         }
+    }
+}
+
+clone_trait_object!(<RetryReason, RenderRequestError, ParseResponseOutput, ParseResponseError> RetryableEndpoint<RetryReason = RetryReason, RenderRequestError = RenderRequestError, ParseResponseOutput = ParseResponseOutput, ParseResponseError = ParseResponseError>);
+impl_downcast!(RetryableEndpoint assoc RetryReason, RenderRequestError, ParseResponseOutput, ParseResponseError);
+
+impl<RetryReason, RenderRequestError, ParseResponseOutput, ParseResponseError> fmt::Debug
+    for dyn RetryableEndpoint<
+            RetryReason = RetryReason,
+            RenderRequestError = RenderRequestError,
+            ParseResponseOutput = ParseResponseOutput,
+            ParseResponseError = ParseResponseError,
+        > + Send
+        + Sync
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("RetryableEndpoint").finish()
     }
 }
 
