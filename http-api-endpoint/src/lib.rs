@@ -12,10 +12,10 @@ pub const MIME_APPLICATION_JSON: &str = "application/json";
 //
 #[cfg(feature = "dyn-clone")]
 pub trait Endpoint: DynClone {
-    type RenderRequestError: error::Error + 'static;
+    type RenderRequestError: error::Error + Send + Sync + 'static;
 
     type ParseResponseOutput;
-    type ParseResponseError: error::Error + 'static;
+    type ParseResponseError: error::Error + Send + Sync + 'static;
 
     fn render_request(&self) -> Result<Request<Body>, Self::RenderRequestError>;
 
@@ -27,10 +27,10 @@ pub trait Endpoint: DynClone {
 
 #[cfg(not(feature = "dyn-clone"))]
 pub trait Endpoint {
-    type RenderRequestError: error::Error + 'static;
+    type RenderRequestError: error::Error + Send + Sync + 'static;
 
     type ParseResponseOutput;
-    type ParseResponseError: error::Error + 'static;
+    type ParseResponseError: error::Error + Send + Sync + 'static;
 
     fn render_request(&self) -> Result<Request<Body>, Self::RenderRequestError>;
 
@@ -75,10 +75,10 @@ impl<RenderRequestError, ParseResponseOutput, ParseResponseError> fmt::Debug
 pub trait RetryableEndpoint: DynClone {
     type RetryReason: Send + Sync + Clone;
 
-    type RenderRequestError: error::Error + 'static;
+    type RenderRequestError: error::Error + Send + Sync + 'static;
 
     type ParseResponseOutput;
-    type ParseResponseError: error::Error + 'static;
+    type ParseResponseError: error::Error + Send + Sync + 'static;
 
     fn render_request(
         &self,
@@ -107,10 +107,10 @@ pub trait RetryableEndpoint: DynClone {
 pub trait RetryableEndpoint {
     type RetryReason: Send + Sync + Clone;
 
-    type RenderRequestError: error::Error + 'static;
+    type RenderRequestError: error::Error + Send + Sync + 'static;
 
     type ParseResponseOutput;
-    type ParseResponseError: error::Error + 'static;
+    type ParseResponseError: error::Error + Send + Sync + 'static;
 
     fn render_request(
         &self,

@@ -6,7 +6,7 @@ use http_api_endpoint::{Endpoint, RetryableEndpoint, RetryableEndpointRetry};
 
 #[async_trait]
 pub trait Client {
-    type RespondError: error::Error + 'static;
+    type RespondError: error::Error + Send + Sync + 'static;
 
     async fn respond(&self, request: Request<Body>) -> Result<Response<Body>, Self::RespondError>;
 
@@ -76,8 +76,8 @@ pub trait Client {
         >,
     ) -> Result<PRO, ClientRespondEndpointError<Self::RespondError, RRE, PRE>>
     where
-        RRE: error::Error + 'static,
-        PRE: error::Error + 'static,
+        RRE: error::Error + Send + Sync + 'static,
+        PRE: error::Error + Send + Sync + 'static,
     {
         self.respond_dyn_endpoint_with_callback(endpoint, |req| req, |_| {})
             .await
@@ -97,8 +97,8 @@ pub trait Client {
         mut post_request_callback: PostRCB,
     ) -> Result<PRO, ClientRespondEndpointError<Self::RespondError, RRE, PRE>>
     where
-        RRE: error::Error + 'static,
-        PRE: error::Error + 'static,
+        RRE: error::Error + Send + Sync + 'static,
+        PRE: error::Error + Send + Sync + 'static,
         PreRCB: FnMut(Request<Body>) -> Request<Body> + Send,
         PostRCB: FnMut(&Response<Body>) + Send,
     {
@@ -205,9 +205,9 @@ pub trait RetryableClient: Client {
 #[derive(Debug)]
 pub enum ClientRespondEndpointError<RE, EPRRE, EPPRE>
 where
-    RE: error::Error + 'static,
-    EPRRE: error::Error + 'static,
-    EPPRE: error::Error + 'static,
+    RE: error::Error + Send + Sync + 'static,
+    EPRRE: error::Error + Send + Sync + 'static,
+    EPPRE: error::Error + Send + Sync + 'static,
 {
     RespondFailed(RE),
     EndpointRenderRequestFailed(EPRRE),
@@ -215,9 +215,9 @@ where
 }
 impl<RE, EPRRE, EPPRE> fmt::Display for ClientRespondEndpointError<RE, EPRRE, EPPRE>
 where
-    RE: error::Error + 'static,
-    EPRRE: error::Error + 'static,
-    EPPRE: error::Error + 'static,
+    RE: error::Error + Send + Sync + 'static,
+    EPRRE: error::Error + Send + Sync + 'static,
+    EPPRE: error::Error + Send + Sync + 'static,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{:?}", self)
@@ -225,9 +225,9 @@ where
 }
 impl<RE, EPRRE, EPPRE> error::Error for ClientRespondEndpointError<RE, EPRRE, EPPRE>
 where
-    RE: error::Error + 'static,
-    EPRRE: error::Error + 'static,
-    EPPRE: error::Error + 'static,
+    RE: error::Error + Send + Sync + 'static,
+    EPRRE: error::Error + Send + Sync + 'static,
+    EPPRE: error::Error + Send + Sync + 'static,
 {
 }
 
@@ -235,9 +235,9 @@ where
 #[derive(Debug)]
 pub enum RetryableClientRespondEndpointUntilDoneError<RE, EPRRE, EPPRE>
 where
-    RE: error::Error + 'static,
-    EPRRE: error::Error + 'static,
-    EPPRE: error::Error + 'static,
+    RE: error::Error + Send + Sync + 'static,
+    EPRRE: error::Error + Send + Sync + 'static,
+    EPPRE: error::Error + Send + Sync + 'static,
 {
     RespondFailed(RE),
     EndpointRenderRequestFailed(EPRRE),
@@ -247,9 +247,9 @@ where
 impl<RE, EPRRE, EPPRE> fmt::Display
     for RetryableClientRespondEndpointUntilDoneError<RE, EPRRE, EPPRE>
 where
-    RE: error::Error + 'static,
-    EPRRE: error::Error + 'static,
-    EPPRE: error::Error + 'static,
+    RE: error::Error + Send + Sync + 'static,
+    EPRRE: error::Error + Send + Sync + 'static,
+    EPPRE: error::Error + Send + Sync + 'static,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{:?}", self)
@@ -258,9 +258,9 @@ where
 impl<RE, EPRRE, EPPRE> error::Error
     for RetryableClientRespondEndpointUntilDoneError<RE, EPRRE, EPPRE>
 where
-    RE: error::Error + 'static,
-    EPRRE: error::Error + 'static,
-    EPPRE: error::Error + 'static,
+    RE: error::Error + Send + Sync + 'static,
+    EPRRE: error::Error + Send + Sync + 'static,
+    EPPRE: error::Error + Send + Sync + 'static,
 {
 }
 
