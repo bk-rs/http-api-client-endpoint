@@ -66,14 +66,12 @@ pub trait Client {
 
     async fn respond_dyn_endpoint<RRE, PRO, PRE>(
         &self,
-        endpoint: &Box<
-            dyn Endpoint<
-                    RenderRequestError = RRE,
-                    ParseResponseOutput = PRO,
-                    ParseResponseError = PRE,
-                > + Send
-                + Sync,
-        >,
+        endpoint: &(dyn Endpoint<
+            RenderRequestError = RRE,
+            ParseResponseOutput = PRO,
+            ParseResponseError = PRE,
+        > + Send
+              + Sync),
     ) -> Result<PRO, ClientRespondEndpointError<Self::RespondError, RRE, PRE>>
     where
         RRE: error::Error + Send + Sync + 'static,
@@ -85,14 +83,12 @@ pub trait Client {
 
     async fn respond_dyn_endpoint_with_callback<RRE, PRO, PRE, PreRCB, PostRCB>(
         &self,
-        endpoint: &Box<
-            dyn Endpoint<
-                    RenderRequestError = RRE,
-                    ParseResponseOutput = PRO,
-                    ParseResponseError = PRE,
-                > + Send
-                + Sync,
-        >,
+        endpoint: &(dyn Endpoint<
+            RenderRequestError = RRE,
+            ParseResponseOutput = PRO,
+            ParseResponseError = PRE,
+        > + Send
+              + Sync),
         mut pre_request_callback: PreRCB,
         mut post_request_callback: PostRCB,
     ) -> Result<PRO, ClientRespondEndpointError<Self::RespondError, RRE, PRE>>
@@ -329,7 +325,7 @@ mod tests {
                 let client = MyClient;
 
                 let endpoint = map.get(key).unwrap();
-                client.respond_dyn_endpoint(endpoint).await
+                client.respond_dyn_endpoint(endpoint.as_ref()).await
             })
         });
         panic::set_hook(prev_hook);
