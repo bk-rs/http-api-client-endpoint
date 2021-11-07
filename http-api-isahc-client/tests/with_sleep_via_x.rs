@@ -1,6 +1,8 @@
 use std::io;
 
-use http_api_endpoint::{Body, Request, Response, RetryableEndpoint, RetryableEndpointRetry};
+use http_api_client_endpoint::{
+    Body, Request, Response, RetryableEndpoint, RetryableEndpointRetry,
+};
 
 #[derive(Clone)]
 struct Foo;

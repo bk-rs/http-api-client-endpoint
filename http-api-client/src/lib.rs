@@ -1,8 +1,8 @@
 use std::{error, fmt, time::Duration};
 
 pub use async_trait::async_trait;
-pub use http_api_endpoint::{http, Body, Request, Response};
-use http_api_endpoint::{Endpoint, RetryableEndpoint, RetryableEndpointRetry};
+pub use http_api_client_endpoint::{http, Body, Request, Response};
+use http_api_client_endpoint::{Endpoint, RetryableEndpoint, RetryableEndpointRetry};
 
 #[async_trait]
 pub trait Client {

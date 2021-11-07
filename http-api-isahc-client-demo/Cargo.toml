@@ -8,7 +8,7 @@ name = "httpbin"
 path = "src/httpbin.rs"
 
 [dependencies]
-http-api-endpoint = { path = "../http-api-endpoint" }
+http-api-client-endpoint = { version = "^0.1", path = "../http-api-client-endpoint" }
 http-api-isahc-client = { path = "../http-api-isahc-client", features = ["with-sleep-via-futures-timer"] }
 
 futures-lite = { version = "1.12" }

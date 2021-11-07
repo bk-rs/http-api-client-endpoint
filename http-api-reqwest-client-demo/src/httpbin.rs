@@ -46,7 +46,7 @@ async fn run() -> Result<(), Box<dyn error::Error>> {
 pub mod endpoints {
     use std::collections::HashMap;
 
-    use http_api_endpoint::{http::Error as HttpError, Body, Endpoint, Request, Response};
+    use http_api_client_endpoint::{http::Error as HttpError, Body, Endpoint, Request, Response};
     use serde::Deserialize;
     use serde_json::Error as SerdeJsonError;
 
