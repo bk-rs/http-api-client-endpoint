@@ -45,6 +45,18 @@ clone_trait_object!(<RenderRequestError, ParseResponseOutput, ParseResponseError
 
 impl<RenderRequestError, ParseResponseOutput, ParseResponseError> fmt::Debug
     for dyn Endpoint<
+        RenderRequestError = RenderRequestError,
+        ParseResponseOutput = ParseResponseOutput,
+        ParseResponseError = ParseResponseError,
+    >
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Endpoint").finish()
+    }
+}
+
+impl<RenderRequestError, ParseResponseOutput, ParseResponseError> fmt::Debug
+    for dyn Endpoint<
             RenderRequestError = RenderRequestError,
             ParseResponseOutput = ParseResponseOutput,
             ParseResponseError = ParseResponseError,
@@ -125,6 +137,19 @@ pub trait RetryableEndpoint {
 
 #[cfg(feature = "dyn-clone")]
 clone_trait_object!(<RetryReason, RenderRequestError, ParseResponseOutput, ParseResponseError> RetryableEndpoint<RetryReason = RetryReason, RenderRequestError = RenderRequestError, ParseResponseOutput = ParseResponseOutput, ParseResponseError = ParseResponseError>);
+
+impl<RetryReason, RenderRequestError, ParseResponseOutput, ParseResponseError> fmt::Debug
+    for dyn RetryableEndpoint<
+        RetryReason = RetryReason,
+        RenderRequestError = RenderRequestError,
+        ParseResponseOutput = ParseResponseOutput,
+        ParseResponseError = ParseResponseError,
+    >
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("RetryableEndpoint").finish()
+    }
+}
 
 impl<RetryReason, RenderRequestError, ParseResponseOutput, ParseResponseError> fmt::Debug
     for dyn RetryableEndpoint<
