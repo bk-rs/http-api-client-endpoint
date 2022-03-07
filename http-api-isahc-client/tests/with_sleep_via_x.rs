@@ -45,7 +45,7 @@ impl RetryableEndpoint for Foo {
 
 #[cfg(all(
     feature = "with-sleep-via-tokio",
-    not(feature = "with-sleep-via-futures-timer"),
+    not(feature = "with-sleep-via-async-timer"),
     not(feature = "with-sleep-via-async-io")
 ))]
 mod sleep_via_tokio_tests {
@@ -67,7 +67,7 @@ mod sleep_via_tokio_tests {
 
 #[cfg(all(
     not(feature = "with-sleep-via-tokio"),
-    feature = "with-sleep-via-futures-timer",
+    feature = "with-sleep-via-async-timer",
     not(feature = "with-sleep-via-async-io")
 ))]
 mod sleep_via_futures_timer_tests {
@@ -88,7 +88,7 @@ mod sleep_via_futures_timer_tests {
 
 #[cfg(all(
     not(feature = "with-sleep-via-tokio"),
-    not(feature = "with-sleep-via-futures-timer"),
+    not(feature = "with-sleep-via-async-timer"),
     feature = "with-sleep-via-async-io"
 ))]
 mod sleep_via_async_io_tests {

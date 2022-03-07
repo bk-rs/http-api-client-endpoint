@@ -6,7 +6,7 @@ use std::time::Duration;
 pub use http_api_client::Client;
 #[cfg(any(
     feature = "with-sleep-via-tokio",
-    feature = "with-sleep-via-futures-timer",
+    feature = "with-sleep-via-async-timer",
     feature = "with-sleep-via-async-io"
 ))]
 pub use http_api_client::RetryableClient;
@@ -49,8 +49,7 @@ impl Client for IsahcClient {
         let (head, body) = res.into_parts();
 
         let mut body_buf = Vec::with_capacity(
-            body.len()
-                .unwrap_or_else(|| self.body_buf_default_capacity as u64) as usize,
+            body.len().unwrap_or(self.body_buf_default_capacity as u64) as usize,
         );
 
         let mut res = Response::from_parts(head, body);
@@ -65,36 +64,36 @@ impl Client for IsahcClient {
 
 #[cfg(all(
     feature = "with-sleep-via-tokio",
-    not(feature = "with-sleep-via-futures-timer"),
+    not(feature = "with-sleep-via-async-timer"),
     not(feature = "with-sleep-via-async-io")
 ))]
 #[async_trait]
 impl RetryableClient for IsahcClient {
     async fn sleep(&self, dur: Duration) {
-        tokio::time::sleep(dur).await;
+        async_sleep::sleep::<async_sleep::impl_tokio::Sleep>(dur).await;
     }
 }
 
 #[cfg(all(
     not(feature = "with-sleep-via-tokio"),
-    feature = "with-sleep-via-futures-timer",
+    feature = "with-sleep-via-async-timer",
     not(feature = "with-sleep-via-async-io")
 ))]
 #[async_trait]
 impl RetryableClient for IsahcClient {
     async fn sleep(&self, dur: Duration) {
-        futures_timer::Delay::new(dur).await;
+        async_sleep::sleep::<async_sleep::impl_async_timer::PlatformTimer>(dur).await;
     }
 }
 
 #[cfg(all(
     not(feature = "with-sleep-via-tokio"),
-    not(feature = "with-sleep-via-futures-timer"),
+    not(feature = "with-sleep-via-async-timer"),
     feature = "with-sleep-via-async-io"
 ))]
 #[async_trait]
 impl RetryableClient for IsahcClient {
     async fn sleep(&self, dur: Duration) {
-        async_io::Timer::after(dur).await;
+        async_sleep::sleep::<async_sleep::impl_async_io::Timer>(dur).await;
     }
 }

@@ -16,18 +16,16 @@ readme = "README.md"
 features = [ "with-sleep-via-tokio" ]
 
 [features]
-with-sleep-via-tokio = ["tokio/time"]
-with-sleep-via-futures-timer = ["futures-timer"]
-with-sleep-via-async-io = ["async-io"]
+with-sleep-via-tokio = ["async-sleep/impl_tokio"]
+with-sleep-via-async-timer = ["async-sleep/impl_async_timer"]
+with-sleep-via-async-io = ["async-sleep/impl_async_io"]
 
 [dependencies]
 http-api-client = { version = "^0.2", path = "../http-api-client" }
 
-isahc = { version = "1.5", default-features = false }
+isahc = { version = "1.6", default-features = false }
 
-tokio = { version = "1.12", default-features = false, optional = true }
-futures-timer = { version = "3.0", default-features = false, optional = true }
-async-io = { version = "1.6", default-features = false, optional = true }
+async-sleep = { version = "0.2", default-features = false, optional = true }
 
 [dev-dependencies]
 http-api-client-endpoint = { version = "^0.2", path = "../http-api-client-endpoint" }
@@ -38,9 +36,9 @@ rand = { version = "0.8" }
 
 [package.metadata.cargo-all-features]
 skip_feature_sets = [
-    ["with-sleep-via-tokio", "with-sleep-via-futures-timer"],
+    ["with-sleep-via-tokio", "with-sleep-via-async-timer"],
     ["with-sleep-via-tokio", "with-sleep-via-async-io"],
 
-    ["with-sleep-via-futures-timer", "with-sleep-via-async-io"],
+    ["with-sleep-via-async-timer", "with-sleep-via-async-io"],
 ]
 skip_optional_dependencies = true
