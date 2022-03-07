@@ -70,7 +70,7 @@ mod sleep_via_tokio_tests {
     feature = "with-sleep-via-async-timer",
     not(feature = "with-sleep-via-async-io")
 ))]
-mod sleep_via_futures_timer_tests {
+mod sleep_via_async_timer_tests {
     use super::Foo;
 
     use futures_executor::block_on;
