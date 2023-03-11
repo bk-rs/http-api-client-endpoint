@@ -11,3 +11,13 @@ cargo fmt -- --check
 
 cargo test-all-features -- --nocapture
 ```
+
+## Publish order
+
+http-api-client-endpoint
+
+http-api-client
+
+http-api-isahc-client
+
+http-api-reqwest-client
