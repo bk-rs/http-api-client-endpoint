@@ -1,4 +1,4 @@
-use std::{error, fmt, time::Duration};
+use core::time::Duration;
 
 #[cfg(feature = "dyn-clone")]
 use dyn_clone::{clone_trait_object, DynClone};
@@ -12,10 +12,10 @@ pub const MIME_APPLICATION_JSON: &str = "application/json";
 //
 #[cfg(feature = "dyn-clone")]
 pub trait Endpoint: DynClone {
-    type RenderRequestError: error::Error + Send + Sync + 'static;
+    type RenderRequestError: std::error::Error + Send + Sync + 'static;
 
     type ParseResponseOutput;
-    type ParseResponseError: error::Error + Send + Sync + 'static;
+    type ParseResponseError: std::error::Error + Send + Sync + 'static;
 
     fn render_request(&self) -> Result<Request<Body>, Self::RenderRequestError>;
 
@@ -27,10 +27,10 @@ pub trait Endpoint: DynClone {
 
 #[cfg(not(feature = "dyn-clone"))]
 pub trait Endpoint {
-    type RenderRequestError: error::Error + Send + Sync + 'static;
+    type RenderRequestError: std::error::Error + Send + Sync + 'static;
 
     type ParseResponseOutput;
-    type ParseResponseError: error::Error + Send + Sync + 'static;
+    type ParseResponseError: std::error::Error + Send + Sync + 'static;
 
     fn render_request(&self) -> Result<Request<Body>, Self::RenderRequestError>;
 
@@ -43,19 +43,19 @@ pub trait Endpoint {
 #[cfg(feature = "dyn-clone")]
 clone_trait_object!(<RenderRequestError, ParseResponseOutput, ParseResponseError> Endpoint<RenderRequestError = RenderRequestError, ParseResponseOutput = ParseResponseOutput, ParseResponseError = ParseResponseError>);
 
-impl<RenderRequestError, ParseResponseOutput, ParseResponseError> fmt::Debug
+impl<RenderRequestError, ParseResponseOutput, ParseResponseError> core::fmt::Debug
     for dyn Endpoint<
         RenderRequestError = RenderRequestError,
         ParseResponseOutput = ParseResponseOutput,
         ParseResponseError = ParseResponseError,
     >
 {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct("Endpoint").finish()
     }
 }
 
-impl<RenderRequestError, ParseResponseOutput, ParseResponseError> fmt::Debug
+impl<RenderRequestError, ParseResponseOutput, ParseResponseError> core::fmt::Debug
     for dyn Endpoint<
             RenderRequestError = RenderRequestError,
             ParseResponseOutput = ParseResponseOutput,
@@ -63,7 +63,7 @@ impl<RenderRequestError, ParseResponseOutput, ParseResponseError> fmt::Debug
         > + Send
         + Sync
 {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct("Endpoint").finish()
     }
 }
@@ -75,10 +75,10 @@ impl<RenderRequestError, ParseResponseOutput, ParseResponseError> fmt::Debug
 pub trait RetryableEndpoint: DynClone {
     type RetryReason: Send + Sync + Clone;
 
-    type RenderRequestError: error::Error + Send + Sync + 'static;
+    type RenderRequestError: std::error::Error + Send + Sync + 'static;
 
     type ParseResponseOutput;
-    type ParseResponseError: error::Error + Send + Sync + 'static;
+    type ParseResponseError: std::error::Error + Send + Sync + 'static;
 
     fn render_request(
         &self,
@@ -107,10 +107,10 @@ pub trait RetryableEndpoint: DynClone {
 pub trait RetryableEndpoint {
     type RetryReason: Send + Sync + Clone;
 
-    type RenderRequestError: error::Error + Send + Sync + 'static;
+    type RenderRequestError: std::error::Error + Send + Sync + 'static;
 
     type ParseResponseOutput;
-    type ParseResponseError: error::Error + Send + Sync + 'static;
+    type ParseResponseError: std::error::Error + Send + Sync + 'static;
 
     fn render_request(
         &self,
@@ -138,7 +138,7 @@ pub trait RetryableEndpoint {
 #[cfg(feature = "dyn-clone")]
 clone_trait_object!(<RetryReason, RenderRequestError, ParseResponseOutput, ParseResponseError> RetryableEndpoint<RetryReason = RetryReason, RenderRequestError = RenderRequestError, ParseResponseOutput = ParseResponseOutput, ParseResponseError = ParseResponseError>);
 
-impl<RetryReason, RenderRequestError, ParseResponseOutput, ParseResponseError> fmt::Debug
+impl<RetryReason, RenderRequestError, ParseResponseOutput, ParseResponseError> core::fmt::Debug
     for dyn RetryableEndpoint<
         RetryReason = RetryReason,
         RenderRequestError = RenderRequestError,
@@ -146,12 +146,12 @@ impl<RetryReason, RenderRequestError, ParseResponseOutput, ParseResponseError> f
         ParseResponseError = ParseResponseError,
     >
 {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct("RetryableEndpoint").finish()
     }
 }
 
-impl<RetryReason, RenderRequestError, ParseResponseOutput, ParseResponseError> fmt::Debug
+impl<RetryReason, RenderRequestError, ParseResponseOutput, ParseResponseError> core::fmt::Debug
     for dyn RetryableEndpoint<
             RetryReason = RetryReason,
             RenderRequestError = RenderRequestError,
@@ -160,7 +160,7 @@ impl<RetryReason, RenderRequestError, ParseResponseOutput, ParseResponseError> f
         > + Send
         + Sync
 {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct("RetryableEndpoint").finish()
     }
 }
@@ -171,11 +171,11 @@ pub struct RetryableEndpointRetry<T> {
     pub reason: T,
 }
 
-impl<T> fmt::Debug for RetryableEndpointRetry<T>
+impl<T> core::fmt::Debug for RetryableEndpointRetry<T>
 where
-    T: fmt::Debug,
+    T: core::fmt::Debug,
 {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct("RetryableEndpointRetry")
             .field("count", &self.count)
             .field("reason", &self.reason)

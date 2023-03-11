@@ -1,7 +1,7 @@
 pub use http_api_client;
 pub use reqwest;
 
-use std::time::Duration;
+use core::time::Duration;
 
 use http_api_client::{async_trait, Body, Request, Response};
 pub use http_api_client::{Client, RetryableClient};

@@ -1,4 +1,4 @@
-use std::io;
+use std::io::Error as IoError;
 
 use http_api_client_endpoint::{
     Body, Request, Response, RetryableEndpoint, RetryableEndpointRetry,
@@ -9,10 +9,10 @@ struct Foo;
 impl RetryableEndpoint for Foo {
     type RetryReason = usize;
 
-    type RenderRequestError = io::Error;
+    type RenderRequestError = IoError;
 
     type ParseResponseOutput = ();
-    type ParseResponseError = io::Error;
+    type ParseResponseError = IoError;
 
     fn render_request(
         &self,

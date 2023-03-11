@@ -2,8 +2,6 @@
 RUST_BACKTRACE=1 RUST_LOG=trace cargo run -p http-api-isahc-client-demo --bin httpbin
 */
 
-use std::error;
-
 use futures_lite::future::block_on;
 use http_api_isahc_client::{Client as _, IsahcClient, RetryableClient as _};
 use isahc::{
@@ -11,13 +9,13 @@ use isahc::{
     HttpClient,
 };
 
-fn main() -> Result<(), Box<dyn error::Error>> {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     pretty_env_logger::init();
 
     block_on(run())
 }
 
-async fn run() -> Result<(), Box<dyn error::Error>> {
+async fn run() -> Result<(), Box<dyn std::error::Error>> {
     let client = IsahcClient::with(
         HttpClient::builder()
             .cookies()

@@ -1,4 +1,4 @@
-use std::{error, fmt, time::Duration};
+use core::time::Duration;
 
 pub use async_trait::async_trait;
 pub use http_api_client_endpoint::{http, Body, Request, Response};
@@ -6,7 +6,7 @@ use http_api_client_endpoint::{Endpoint, RetryableEndpoint, RetryableEndpointRet
 
 #[async_trait]
 pub trait Client {
-    type RespondError: error::Error + Send + Sync + 'static;
+    type RespondError: std::error::Error + Send + Sync + 'static;
 
     async fn respond(&self, request: Request<Body>) -> Result<Response<Body>, Self::RespondError>;
 
@@ -64,8 +64,8 @@ pub trait Client {
               + Sync),
     ) -> Result<PRO, ClientRespondEndpointError<Self::RespondError, RRE, PRE>>
     where
-        RRE: error::Error + Send + Sync + 'static,
-        PRE: error::Error + Send + Sync + 'static,
+        RRE: std::error::Error + Send + Sync + 'static,
+        PRE: std::error::Error + Send + Sync + 'static,
     {
         self.respond_dyn_endpoint_with_callback(endpoint, |req| req, |_| {})
             .await
@@ -83,8 +83,8 @@ pub trait Client {
         mut post_request_callback: PostRCB,
     ) -> Result<PRO, ClientRespondEndpointError<Self::RespondError, RRE, PRE>>
     where
-        RRE: error::Error + Send + Sync + 'static,
-        PRE: error::Error + Send + Sync + 'static,
+        RRE: std::error::Error + Send + Sync + 'static,
+        PRE: std::error::Error + Send + Sync + 'static,
         PreRCB: FnMut(Request<Body>) -> Request<Body> + Send,
         PostRCB: FnMut(&Response<Body>) + Send,
     {
@@ -191,29 +191,29 @@ pub trait RetryableClient: Client {
 #[derive(Debug)]
 pub enum ClientRespondEndpointError<RE, EPRRE, EPPRE>
 where
-    RE: error::Error + Send + Sync + 'static,
-    EPRRE: error::Error + Send + Sync + 'static,
-    EPPRE: error::Error + Send + Sync + 'static,
+    RE: std::error::Error + Send + Sync + 'static,
+    EPRRE: std::error::Error + Send + Sync + 'static,
+    EPPRE: std::error::Error + Send + Sync + 'static,
 {
     RespondFailed(RE),
     EndpointRenderRequestFailed(EPRRE),
     EndpointParseResponseFailed(EPPRE),
 }
-impl<RE, EPRRE, EPPRE> fmt::Display for ClientRespondEndpointError<RE, EPRRE, EPPRE>
+impl<RE, EPRRE, EPPRE> core::fmt::Display for ClientRespondEndpointError<RE, EPRRE, EPPRE>
 where
-    RE: error::Error + Send + Sync + 'static,
-    EPRRE: error::Error + Send + Sync + 'static,
-    EPPRE: error::Error + Send + Sync + 'static,
+    RE: std::error::Error + Send + Sync + 'static,
+    EPRRE: std::error::Error + Send + Sync + 'static,
+    EPPRE: std::error::Error + Send + Sync + 'static,
 {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "{:?}", self)
     }
 }
-impl<RE, EPRRE, EPPRE> error::Error for ClientRespondEndpointError<RE, EPRRE, EPPRE>
+impl<RE, EPRRE, EPPRE> std::error::Error for ClientRespondEndpointError<RE, EPRRE, EPPRE>
 where
-    RE: error::Error + Send + Sync + 'static,
-    EPRRE: error::Error + Send + Sync + 'static,
-    EPPRE: error::Error + Send + Sync + 'static,
+    RE: std::error::Error + Send + Sync + 'static,
+    EPRRE: std::error::Error + Send + Sync + 'static,
+    EPPRE: std::error::Error + Send + Sync + 'static,
 {
 }
 
@@ -221,32 +221,32 @@ where
 #[derive(Debug)]
 pub enum RetryableClientRespondEndpointUntilDoneError<RE, EPRRE, EPPRE>
 where
-    RE: error::Error + Send + Sync + 'static,
-    EPRRE: error::Error + Send + Sync + 'static,
-    EPPRE: error::Error + Send + Sync + 'static,
+    RE: std::error::Error + Send + Sync + 'static,
+    EPRRE: std::error::Error + Send + Sync + 'static,
+    EPPRE: std::error::Error + Send + Sync + 'static,
 {
     RespondFailed(RE),
     EndpointRenderRequestFailed(EPRRE),
     EndpointParseResponseFailed(EPPRE),
     ReachedMaxRetries,
 }
-impl<RE, EPRRE, EPPRE> fmt::Display
+impl<RE, EPRRE, EPPRE> core::fmt::Display
     for RetryableClientRespondEndpointUntilDoneError<RE, EPRRE, EPPRE>
 where
-    RE: error::Error + Send + Sync + 'static,
-    EPRRE: error::Error + Send + Sync + 'static,
-    EPPRE: error::Error + Send + Sync + 'static,
+    RE: std::error::Error + Send + Sync + 'static,
+    EPRRE: std::error::Error + Send + Sync + 'static,
+    EPPRE: std::error::Error + Send + Sync + 'static,
 {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "{:?}", self)
     }
 }
-impl<RE, EPRRE, EPPRE> error::Error
+impl<RE, EPRRE, EPPRE> std::error::Error
     for RetryableClientRespondEndpointUntilDoneError<RE, EPRRE, EPPRE>
 where
-    RE: error::Error + Send + Sync + 'static,
-    EPRRE: error::Error + Send + Sync + 'static,
-    EPPRE: error::Error + Send + Sync + 'static,
+    RE: std::error::Error + Send + Sync + 'static,
+    EPRRE: std::error::Error + Send + Sync + 'static,
+    EPPRE: std::error::Error + Send + Sync + 'static,
 {
 }
 
@@ -254,17 +254,17 @@ where
 mod tests {
     use super::*;
 
-    use std::{collections::HashMap, io, panic};
+    use std::{collections::HashMap, io::Error as IoError, panic};
 
     use futures_executor::block_on;
 
     #[derive(Clone)]
     struct MyEndpoint;
     impl Endpoint for MyEndpoint {
-        type RenderRequestError = io::Error;
+        type RenderRequestError = IoError;
 
         type ParseResponseOutput = ();
-        type ParseResponseError = io::Error;
+        type ParseResponseError = IoError;
 
         fn render_request(&self) -> Result<Request<Body>, Self::RenderRequestError> {
             unimplemented!()
@@ -282,7 +282,7 @@ mod tests {
     struct MyClient;
     #[async_trait]
     impl Client for MyClient {
-        type RespondError = io::Error;
+        type RespondError = IoError;
 
         async fn respond(
             &self,
@@ -302,9 +302,9 @@ mod tests {
                     &'static str,
                     Box<
                         dyn Endpoint<
-                                RenderRequestError = io::Error,
+                                RenderRequestError = IoError,
                                 ParseResponseOutput = (),
-                                ParseResponseError = io::Error,
+                                ParseResponseError = IoError,
                             > + Send
                             + Sync,
                     >,

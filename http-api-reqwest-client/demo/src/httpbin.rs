@@ -2,19 +2,17 @@
 RUST_BACKTRACE=1 RUST_LOG=trace cargo run -p http-api-reqwest-client-demo --bin httpbin
 */
 
-use std::error;
-
 use http_api_reqwest_client::{Client as _, ReqwestClient};
 use reqwest::Client;
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn error::Error>> {
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     pretty_env_logger::init();
 
     run().await
 }
 
-async fn run() -> Result<(), Box<dyn error::Error>> {
+async fn run() -> Result<(), Box<dyn std::error::Error>> {
     let client = ReqwestClient::with(Client::builder().use_native_tls().build()?);
 
     //

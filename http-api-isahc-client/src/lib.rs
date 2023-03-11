@@ -1,7 +1,7 @@
 pub use http_api_client;
 pub use isahc;
 
-use std::time::Duration;
+use core::time::Duration;
 
 pub use http_api_client::Client;
 #[cfg(any(
