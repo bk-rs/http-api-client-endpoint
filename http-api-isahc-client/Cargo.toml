@@ -21,17 +21,17 @@ with-sleep-via-async-timer = ["async-sleep/impl_async_timer"]
 with-sleep-via-async-io = ["async-sleep/impl_async_io"]
 
 [dependencies]
-http-api-client = { version = "^0.2", path = "../http-api-client" }
+http-api-client = { version = "0.2", default-features = false, path = "../http-api-client" }
 
-isahc = { version = "1.6", default-features = false }
+isahc = { version = "1", default-features = false }
 
-async-sleep = { version = "0.2", default-features = false, optional = true }
+async-sleep = { version = "0.4", default-features = false, optional = true }
 
 [dev-dependencies]
-http-api-client-endpoint = { version = "^0.2", path = "../http-api-client-endpoint" }
+http-api-client-endpoint = { version = "0.2", path = "../http-api-client-endpoint" }
 
 futures-executor = { version = "0.3" }
-tokio = { version = "1.12", default-features = false, features = ["rt-multi-thread"] }
+tokio = { version = "1", default-features = false, features = ["rt-multi-thread"] }
 rand = { version = "0.8" }
 
 [package.metadata.cargo-all-features]

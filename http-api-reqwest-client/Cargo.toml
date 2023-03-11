@@ -13,8 +13,8 @@ categories = []
 readme = "README.md"
 
 [dependencies]
-http-api-client = { version = "^0.2", path = "../http-api-client" }
+http-api-client = { version = "0.2", default-features = false, path = "../http-api-client" }
 
 reqwest = { version = "0.11", default-features = false }
 
-tokio = { version = "1.12", default-features = false, features = ["time"] }
+tokio = { version = "1", default-features = false, features = ["time"] }

@@ -21,6 +21,4 @@ default = []
 [dependencies]
 http = { version = "0.2", default-features = false }
 
-dyn-clone = { version = "1.0", default-features = false, optional = true }
-
-[package.metadata.cargo-all-features]
+dyn-clone = { version = "1", default-features = false, optional = true }

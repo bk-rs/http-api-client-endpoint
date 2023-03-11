@@ -8,13 +8,13 @@ name = "httpbin"
 path = "src/httpbin.rs"
 
 [dependencies]
-http-api-client-endpoint = { version = "^0.2", path = "../http-api-client-endpoint" }
-http-api-isahc-client = { path = "../http-api-isahc-client", features = ["with-sleep-via-async-timer"] }
+http-api-client-endpoint = { path = "../http-api-client-endpoint" }
+http-api-isahc-client = { default-features = false, features = ["with-sleep-via-async-timer"], path = "../http-api-isahc-client" }
 
-futures-lite = { version = "1.12" }
-isahc = { version = "1.5", default-features = false, features = ["cookies"] }
+futures-lite = { version = "1" }
+isahc = { version = "1", default-features = false, features = ["cookies"] }
 
-serde = { version = "1.0", features = ["derive"] }
-serde_json = { version = "1.0" }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1" }
 
 pretty_env_logger = { version = "0.4" }
