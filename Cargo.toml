@@ -2,9 +2,12 @@
 members = [
     "http-api-client",
     "http-api-client-endpoint",
+    # 
     "http-api-endpoint",
+    # 
     "http-api-isahc-client",
-    "http-api-isahc-client-demo",
+    "http-api-isahc-client/demo",
+    # 
     "http-api-reqwest-client",
-    "http-api-reqwest-client-demo",
+    "http-api-reqwest-client/demo",
 ]

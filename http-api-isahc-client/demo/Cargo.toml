@@ -8,8 +8,8 @@ name = "httpbin"
 path = "src/httpbin.rs"
 
 [dependencies]
-http-api-client-endpoint = { path = "../http-api-client-endpoint" }
-http-api-isahc-client = { default-features = false, features = ["with-sleep-via-async-timer"], path = "../http-api-isahc-client" }
+http-api-client-endpoint = { path = "../../http-api-client-endpoint" }
+http-api-isahc-client = { default-features = false, features = ["with-sleep-via-async-timer"], path = "../../http-api-isahc-client" }
 
 futures-lite = { version = "1" }
 isahc = { version = "1", default-features = false, features = ["cookies"] }
