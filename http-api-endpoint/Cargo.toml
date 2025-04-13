@@ -13,4 +13,4 @@ categories = []
 readme = "README.md"
 
 [dependencies]
-http-api-client-endpoint = { version = "0.2", path = "../http-api-client-endpoint" }
+http-api-client-endpoint = { version = "0.3", path = "../http-api-client-endpoint" }

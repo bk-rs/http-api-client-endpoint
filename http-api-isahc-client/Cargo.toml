@@ -28,7 +28,7 @@ isahc = { version = "1", default-features = false }
 async-sleep = { version = "0.5", default-features = false, optional = true }
 
 [dev-dependencies]
-http-api-client-endpoint = { version = "0.2", path = "../http-api-client-endpoint" }
+http-api-client-endpoint = { version = "0.3", path = "../http-api-client-endpoint" }
 
 futures-executor = { version = "0.3" }
 tokio = { version = "1", default-features = false, features = [
