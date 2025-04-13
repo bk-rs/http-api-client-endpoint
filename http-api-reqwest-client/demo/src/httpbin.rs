@@ -13,7 +13,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 async fn run() -> Result<(), Box<dyn std::error::Error>> {
-    let client = ReqwestClient::with(Client::builder().use_native_tls().build()?);
+    let client = ReqwestClient::with(Client::builder().use_rustls_tls().build()?);
 
     //
     let headers_endpoint = endpoints::HeadersEndpoint;

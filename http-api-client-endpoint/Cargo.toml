@@ -19,6 +19,6 @@ all-features = true
 default = []
 
 [dependencies]
-http = { version = "0.2", default-features = false }
+http = { version = "1", default-features = false, features = ["std"] }
 
 dyn-clone = { version = "1", default-features = false, optional = true }

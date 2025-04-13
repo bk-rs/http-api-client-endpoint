@@ -82,7 +82,7 @@ impl RetryableClient for IsahcClient {
 #[async_trait]
 impl RetryableClient for IsahcClient {
     async fn sleep(&self, dur: Duration) {
-        async_sleep::sleep::<async_sleep::impl_async_timer::PlatformTimer>(dur).await;
+        async_sleep::sleep::<async_sleep::impl_async_timer::AsyncTimerPlatform>(dur).await;
     }
 }
 

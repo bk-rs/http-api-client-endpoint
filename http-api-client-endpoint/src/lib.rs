@@ -97,7 +97,7 @@ pub trait RetryableEndpoint: DynClone {
 
     fn next_retry_in(&self, retry: &RetryableEndpointRetry<Self::RetryReason>) -> Duration {
         match retry.count {
-            0 | 1 | 2 => Duration::from_millis(500),
+            0..=2 => Duration::from_millis(500),
             _ => Duration::from_secs(1),
         }
     }

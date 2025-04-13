@@ -11,10 +11,18 @@ path = "src/httpbin.rs"
 http-api-client-endpoint = { path = "../../http-api-client-endpoint" }
 http-api-reqwest-client = { path = "../../http-api-reqwest-client" }
 
-tokio = { version = "1", default-features = false, features = ["macros", "rt-multi-thread"] }
-reqwest = { version = "0.11", default-features = false, features = ["native-tls"] }
+tokio = { version = "1", default-features = false, features = [
+    "macros",
+    "rt-multi-thread",
+] }
+reqwest = { version = "0.12", default-features = false, features = [
+    "charset",
+    "rustls-tls",
+    "http2",
+    "macos-system-configuration",
+] }
 
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1" }
 
-pretty_env_logger = { version = "0.4" }
+pretty_env_logger = { version = "0.5" }

@@ -9,12 +9,14 @@ path = "src/httpbin.rs"
 
 [dependencies]
 http-api-client-endpoint = { path = "../../http-api-client-endpoint" }
-http-api-isahc-client = { default-features = false, features = ["with-sleep-via-async-timer"], path = "../../http-api-isahc-client" }
+http-api-isahc-client = { default-features = false, features = [
+    "with-sleep-via-async-timer",
+], path = "../../http-api-isahc-client" }
 
-futures-lite = { version = "1" }
+futures-lite = { version = "2" }
 isahc = { version = "1", default-features = false, features = ["cookies"] }
 
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1" }
 
-pretty_env_logger = { version = "0.4" }
+pretty_env_logger = { version = "0.5" }
