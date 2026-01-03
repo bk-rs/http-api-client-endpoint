@@ -1,7 +1,7 @@
 use core::time::Duration;
 
 pub use async_trait::async_trait;
-pub use http_api_client_endpoint::{http, Body, Request, Response};
+pub use http_api_client_endpoint::{Body, Request, Response, http};
 use http_api_client_endpoint::{Endpoint, RetryableEndpoint, RetryableEndpointRetry};
 
 #[async_trait]
@@ -56,12 +56,14 @@ pub trait Client {
 
     async fn respond_dyn_endpoint<RRE, PRO, PRE>(
         &self,
-        endpoint: &(dyn Endpoint<
+        endpoint: &(
+             dyn Endpoint<
             RenderRequestError = RRE,
             ParseResponseOutput = PRO,
             ParseResponseError = PRE,
         > + Send
-              + Sync),
+                 + Sync
+         ),
     ) -> Result<PRO, ClientRespondEndpointError<Self::RespondError, RRE, PRE>>
     where
         RRE: std::error::Error + Send + Sync + 'static,
@@ -73,12 +75,14 @@ pub trait Client {
 
     async fn respond_dyn_endpoint_with_callback<RRE, PRO, PRE, PreRCB, PostRCB>(
         &self,
-        endpoint: &(dyn Endpoint<
+        endpoint: &(
+             dyn Endpoint<
             RenderRequestError = RRE,
             ParseResponseOutput = PRO,
             ParseResponseError = PRE,
         > + Send
-              + Sync),
+                 + Sync
+         ),
         mut pre_request_callback: PreRCB,
         mut post_request_callback: PostRCB,
     ) -> Result<PRO, ClientRespondEndpointError<Self::RespondError, RRE, PRE>>

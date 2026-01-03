@@ -1,7 +1,7 @@
 use core::time::Duration;
 
 #[cfg(feature = "dyn-clone")]
-use dyn_clone::{clone_trait_object, DynClone};
+use dyn_clone::{DynClone, clone_trait_object};
 pub use http::{self, Request, Response};
 
 pub type Body = Vec<u8>;
@@ -45,10 +45,10 @@ clone_trait_object!(<RenderRequestError, ParseResponseOutput, ParseResponseError
 
 impl<RenderRequestError, ParseResponseOutput, ParseResponseError> core::fmt::Debug
     for dyn Endpoint<
-        RenderRequestError = RenderRequestError,
-        ParseResponseOutput = ParseResponseOutput,
-        ParseResponseError = ParseResponseError,
-    >
+            RenderRequestError = RenderRequestError,
+            ParseResponseOutput = ParseResponseOutput,
+            ParseResponseError = ParseResponseError,
+        >
 {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct("Endpoint").finish()
@@ -140,11 +140,11 @@ clone_trait_object!(<RetryReason, RenderRequestError, ParseResponseOutput, Parse
 
 impl<RetryReason, RenderRequestError, ParseResponseOutput, ParseResponseError> core::fmt::Debug
     for dyn RetryableEndpoint<
-        RetryReason = RetryReason,
-        RenderRequestError = RenderRequestError,
-        ParseResponseOutput = ParseResponseOutput,
-        ParseResponseError = ParseResponseError,
-    >
+            RetryReason = RetryReason,
+            RenderRequestError = RenderRequestError,
+            ParseResponseOutput = ParseResponseOutput,
+            ParseResponseError = ParseResponseError,
+        >
 {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct("RetryableEndpoint").finish()

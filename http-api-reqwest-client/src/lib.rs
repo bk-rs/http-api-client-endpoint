@@ -3,7 +3,7 @@ pub use reqwest;
 
 use core::time::Duration;
 
-use http_api_client::{async_trait, Body, Request, Response};
+use http_api_client::{Body, Request, Response, async_trait};
 pub use http_api_client::{Client, RetryableClient};
 use reqwest::{Client as ReqwestHttpClient, Error as ReqwestError, Request as ReqwestRequest};
 
