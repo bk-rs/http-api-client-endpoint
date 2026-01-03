@@ -15,11 +15,6 @@ readme = "README.md"
 [dependencies]
 http-api-client = { version = "0.3", default-features = false, path = "../http-api-client" }
 
-reqwest = { version = "0.12", default-features = false, features = [
-    "charset",
-    "rustls-tls",
-    "http2",
-    "macos-system-configuration",
-] }
+reqwest = { version = "0.13" }
 
 tokio = { version = "1", default-features = false, features = ["time"] }
