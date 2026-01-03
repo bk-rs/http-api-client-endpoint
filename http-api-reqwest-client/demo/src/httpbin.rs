@@ -6,13 +6,13 @@ use http_api_reqwest_client::{Client as _, ReqwestClient};
 use reqwest::Client;
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> Result<(), Box<dyn core::error::Error>> {
     pretty_env_logger::init();
 
     run().await
 }
 
-async fn run() -> Result<(), Box<dyn std::error::Error>> {
+async fn run() -> Result<(), Box<dyn core::error::Error>> {
     let client = ReqwestClient::with(Client::builder().use_rustls_tls().build()?);
 
     //

@@ -6,7 +6,7 @@ use http_api_client_endpoint::{Endpoint, RetryableEndpoint, RetryableEndpointRet
 
 #[async_trait]
 pub trait Client {
-    type RespondError: std::error::Error + Send + Sync + 'static;
+    type RespondError: core::error::Error + Send + Sync + 'static;
 
     async fn respond(&self, request: Request<Body>) -> Result<Response<Body>, Self::RespondError>;
 
@@ -66,8 +66,8 @@ pub trait Client {
          ),
     ) -> Result<PRO, ClientRespondEndpointError<Self::RespondError, RRE, PRE>>
     where
-        RRE: std::error::Error + Send + Sync + 'static,
-        PRE: std::error::Error + Send + Sync + 'static,
+        RRE: core::error::Error + Send + Sync + 'static,
+        PRE: core::error::Error + Send + Sync + 'static,
     {
         self.respond_dyn_endpoint_with_callback(endpoint, |req| req, |_| {})
             .await
@@ -87,8 +87,8 @@ pub trait Client {
         mut post_request_callback: PostRCB,
     ) -> Result<PRO, ClientRespondEndpointError<Self::RespondError, RRE, PRE>>
     where
-        RRE: std::error::Error + Send + Sync + 'static,
-        PRE: std::error::Error + Send + Sync + 'static,
+        RRE: core::error::Error + Send + Sync + 'static,
+        PRE: core::error::Error + Send + Sync + 'static,
         PreRCB: FnMut(Request<Body>) -> Request<Body> + Send,
         PostRCB: FnMut(&Response<Body>) + Send,
     {
@@ -195,9 +195,9 @@ pub trait RetryableClient: Client {
 #[derive(Debug)]
 pub enum ClientRespondEndpointError<RE, EPRRE, EPPRE>
 where
-    RE: std::error::Error + Send + Sync + 'static,
-    EPRRE: std::error::Error + Send + Sync + 'static,
-    EPPRE: std::error::Error + Send + Sync + 'static,
+    RE: core::error::Error + Send + Sync + 'static,
+    EPRRE: core::error::Error + Send + Sync + 'static,
+    EPPRE: core::error::Error + Send + Sync + 'static,
 {
     RespondFailed(RE),
     EndpointRenderRequestFailed(EPRRE),
@@ -205,19 +205,19 @@ where
 }
 impl<RE, EPRRE, EPPRE> core::fmt::Display for ClientRespondEndpointError<RE, EPRRE, EPPRE>
 where
-    RE: std::error::Error + Send + Sync + 'static,
-    EPRRE: std::error::Error + Send + Sync + 'static,
-    EPPRE: std::error::Error + Send + Sync + 'static,
+    RE: core::error::Error + Send + Sync + 'static,
+    EPRRE: core::error::Error + Send + Sync + 'static,
+    EPPRE: core::error::Error + Send + Sync + 'static,
 {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "{:?}", self)
     }
 }
-impl<RE, EPRRE, EPPRE> std::error::Error for ClientRespondEndpointError<RE, EPRRE, EPPRE>
+impl<RE, EPRRE, EPPRE> core::error::Error for ClientRespondEndpointError<RE, EPRRE, EPPRE>
 where
-    RE: std::error::Error + Send + Sync + 'static,
-    EPRRE: std::error::Error + Send + Sync + 'static,
-    EPPRE: std::error::Error + Send + Sync + 'static,
+    RE: core::error::Error + Send + Sync + 'static,
+    EPRRE: core::error::Error + Send + Sync + 'static,
+    EPPRE: core::error::Error + Send + Sync + 'static,
 {
 }
 
@@ -225,9 +225,9 @@ where
 #[derive(Debug)]
 pub enum RetryableClientRespondEndpointUntilDoneError<RE, EPRRE, EPPRE>
 where
-    RE: std::error::Error + Send + Sync + 'static,
-    EPRRE: std::error::Error + Send + Sync + 'static,
-    EPPRE: std::error::Error + Send + Sync + 'static,
+    RE: core::error::Error + Send + Sync + 'static,
+    EPRRE: core::error::Error + Send + Sync + 'static,
+    EPPRE: core::error::Error + Send + Sync + 'static,
 {
     RespondFailed(RE),
     EndpointRenderRequestFailed(EPRRE),
@@ -237,20 +237,20 @@ where
 impl<RE, EPRRE, EPPRE> core::fmt::Display
     for RetryableClientRespondEndpointUntilDoneError<RE, EPRRE, EPPRE>
 where
-    RE: std::error::Error + Send + Sync + 'static,
-    EPRRE: std::error::Error + Send + Sync + 'static,
-    EPPRE: std::error::Error + Send + Sync + 'static,
+    RE: core::error::Error + Send + Sync + 'static,
+    EPRRE: core::error::Error + Send + Sync + 'static,
+    EPPRE: core::error::Error + Send + Sync + 'static,
 {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "{:?}", self)
     }
 }
-impl<RE, EPRRE, EPPRE> std::error::Error
+impl<RE, EPRRE, EPPRE> core::error::Error
     for RetryableClientRespondEndpointUntilDoneError<RE, EPRRE, EPPRE>
 where
-    RE: std::error::Error + Send + Sync + 'static,
-    EPRRE: std::error::Error + Send + Sync + 'static,
-    EPPRE: std::error::Error + Send + Sync + 'static,
+    RE: core::error::Error + Send + Sync + 'static,
+    EPRRE: core::error::Error + Send + Sync + 'static,
+    EPPRE: core::error::Error + Send + Sync + 'static,
 {
 }
 
